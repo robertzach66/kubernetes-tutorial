@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: configmap-sidecar-container
+  labels:
+    app.kubernetes.io/name: configmap-sidecar-container
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: configmap-sidecar-container
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: configmap-sidecar-container
+    spec:
+      volumes:
+        - name: shared-data
+          emptyDir: {}
+        - name: config-volume
+          configMap:
+            name: love
+      containers:
+        - name: nginx
+          image: nginx:latest
+          volumeMounts:
+            - name: shared-data
+              mountPath: /usr/share/nginx/html
+      initContainers:
+        - name: alpine
+          image: alpine:latest
+          restartPolicy: Always
+          volumeMounts:
+            - name: shared-data
+              mountPath: /pod-data
+            - name: config-volume
+              mountPath: /etc/config
+          command:
+            - /bin/sh
+            - -c
+            - while true; do echo "$(date) I love to eat $(cat /etc/config/love)" > /pod-data/index.html;
+              sleep 10; done;

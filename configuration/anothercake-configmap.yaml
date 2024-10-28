@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  cake: Amsterdamer Appeltart
+kind: ConfigMap
+immutable: true
+metadata:
+  name: anothercake-name

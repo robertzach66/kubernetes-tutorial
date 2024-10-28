@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: immutable-configmap
+  labels:
+    app.kubernetes.io/name: immutable-configmap
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: immutable-configmap
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: immutable-configmap
+    spec:
+      containers:
+        - name: alpine
+          image: alpine:latest
+          command:
+            - /bin/sh
+            - -c
+            - while true; do echo "$(date) I love to eat $(cat /etc/config/cake)"; 
+              sleep 10; done;
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: food-volume
+              mountPath: /etc/config
+      volumes:
+        - name: food-volume
+          configMap:
+            name: cake-name
+            

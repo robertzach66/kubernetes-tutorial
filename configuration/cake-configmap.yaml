@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  cake: Wiener Apfelstrudel
+kind: ConfigMap
+immutable: true
+metadata:
+  name: cake-name
